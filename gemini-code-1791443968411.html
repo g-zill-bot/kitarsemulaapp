@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misi Kitar Semula Plastik!</title>
+    <style>
+        :root {
+            --primary: #FF5722;
+            --secondary: #4CAF50;
+            --accent: #FFEB3B;
+            --blue: #2196F3;
+            --purple: #9C27B0;
+            --bg: #E8F5E9;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', cursive, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 10px;
+            background-color: var(--bg);
+            background-image: radial-gradient(#C8E6C9 2px, transparent 2px);
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border: 6px solid #333;
+            border-radius: 25px;
+            box-shadow: 0 12px 0 #333;
+            overflow: hidden;
+            position: relative;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header / Status Bar */
+        .header {
+            background: #FFC107;
+            padding: 12px 20px;
+            border-bottom: 5px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .stars-container {
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 3px solid #333;
+            color: #FF9800;
+        }
+
+        /* Views / Screens */
+        .screen {
+            display: none;
+            padding: 25px;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Typography & Buttons */
+        h1 {
+            color: #2E7D32;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 #FFF;
+        }
+
+        h2 {
+            color: #1565C0;
+            font-size: 1.6rem;
+            margin-top: 0;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #444;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: 4px solid #333;
+            padding: 12px 30px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #333;
+            transition: all 0.1s ease;
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 #333;
+        }
+
+        .btn-orange { background: #FF9800; }
+        .btn-blue { background: #2196F3; }
+
+        /* Login Screen */
+        .avatar-selection {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 4px solid #ccc;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: #FFF;
+        }
+
+        .avatar.selected {
+            border-color: var(--primary);
+            background: #FFE0B2;
+            transform: scale(1.1);
+        }
+
+        input[type="text"] {
+            font-size: 1.5rem;
+            padding: 10px 20px;
+            border: 4px solid #333;
+            border-radius: 15px;
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+            margin-bottom: 15px;
+        }
+
+        /* Interactive Grid/Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 15px;
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .card {
+            background: white;
+            border: 4px solid #333;
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card .icon {
+            font-size: 3rem;
+        }
+
+        .card.correct {
+            background: #A5D6A7;
+            border-color: #2E7D32;
+        }
+
+        .card.wrong {
+            background: #EF9A9A;
+            border-color: #C62828;
+        }
+
+        /* Drag & Drop Ordering Area */
+        .sequence-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .seq-item {
+            background: #FFF9C4;
+            border: 3px solid #333;
+            border-radius: 12px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: grab;
+        }
+
+        .seq-item .num {
+            background: #FF9800;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #333;
+        }
+
+        /* Safety Banner */
+        .warning-box {
+            background: #FFCDD2;
+            border: 3px dashed #D32F2F;
+            padding: 10px;
+            border-radius: 12px;
+            color: #B71C1C;
+            font-weight: bold;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Cleaning Game Interactive */
+        .wash-area {
+            width: 200px;
+            height: 180px;
+            background: #E0F7FA;
+            border: 4px dashed #00ACC1;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .dirty-botol {
+            font-size: 4rem;
+            filter: grayscale(80%) drop-shadow(0 4px 0 #5D4037);
+            transition: all 0.3s;
+        }
+
+        .clean-botol {
+            font-size: 4rem;
+            filter: drop-shadow(0 4px 0 #0288D1);
+        }
+
+        /* Badge/Certificate popup */
+        .badge {
+            font-size: 5rem;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Top Bar -->
+    <div class="header">
+        <span id="player-display">👤 Murid: -</span>
+        <span class="stars-container">⭐ <span id="star-count">0</span></span>
+    </div>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="screen-login" class="screen active">
+        <h1>♻️ Misi Kitar Semula! ♻️</h1>
+        <p>Kelas: 1 Uranus / Neptune | Subjek: PSSAS PPKI</p>
+        
+        <h2>Masukkan Nama Kamu:</h2>
+        <input type="text" id="student-name" placeholder="Nama anda..." autocomplete="off">
+
+        <p>Pilih Watak Kamu:</p>
+        <div class="avatar-selection">
+            <div class="avatar selected" onclick="selectAvatar(this, '👦')">👦</div>
+            <div class="avatar" onclick="selectAvatar(this, '👧')">👧</div>
+            <div class="avatar" onclick="selectAvatar(this, '🧑')">🧑</div>
+        </div>
+
+        <button class="btn btn-orange" onclick="startGame()">MULA MAIN! 🚀</button>
+    </div>
+
+    <!-- 2. SET INDUKSI (Imbas Kembali) -->
+    <div id="screen-induksi" class="screen">
+        <h2>Misi 1: Kenali Bahan Plastik 🛍️</h2>
+        <p>Pilih <b>4 barangan yang diperbuat daripada PLASTIK</b> sahaja!</p>
+
+        <div class="grid" id="induksi-grid">
+            <div class="card" onclick="checkPlastik(this, true)">
+                <span class="icon">🍾</span>
+                <span>Botol Air</span>
+            </div>
+            <div class="card" onclick="checkPlastik(this, false)">
+                <span class="icon">📖</span>
+                <span>Buku Tulis</span>
+            </div>
+            <div class="card" onclick="checkPlastik(this, true)">
+                <span class="icon">🛍️</span>
+                <span>Beg Plastik</span>
+            </div>
+            <div class="card" onclick="checkPlastik(this, false)">
+                <span class="icon">🥄</span>
+                <span>Sudu Besi</span>
+            </div>
+            <div class="card" onclick="checkPlastik(this, true)">
+                <span class="icon">🪣</span>
+                <span>Baldi Plastik</span>
+            </div>
+            <div class="card" onclick="checkPlastik(this, true)">
+                <span class="icon">Straw</span>
+                <span>Penyedut Plastik</span>
+            </div>
+        </div>
+
+        <p id="induksi-msg" style="min-height: 25px; font-weight: bold; color: #2E7D32;"></p>
+
+        <button id="btn-to-langkah1" class="btn btn-blue" style="display:none;" onclick="showScreen('screen-langkah1')">Seterusnya ➡️</button>
+    </div>
+
+    <!-- 3. LANGKAH 1 (Pembersihan & Keselamatan) -->
+    <div id="screen-langkah1" class="screen">
+        <h2>Misi 2: Bersihkan Botol Plastik 🧼</h2>
+        <p>Murid membawa botol plastik terpakai ke sekolah. Tekan botol untuk membersihkannya!</p>
+
+        <div class="wash-area" onclick="washBottle()">
+            <div id="bottle-element" class="dirty-botol">🍾</div>
+            <span id="wash-text" style="font-size:0.9rem; font-weight:bold; margin-top:5px;">Tekan 3 kali untuk cuci!</span>
+        </div>
+
+        <div class="warning-box">
+            <span style="font-size:2rem;">✂️</span>
+            <span><b>AMARAN KESELAMATAN:</b> Berhati-hati semasa menggunakan gunting untuk membuat Pasu Bunga Tergantung!</span>
+        </div>
+
+        <button id="btn-to-langkah2" class="btn btn-orange" style="display:none;" onclick="showScreen('screen-langkah2')">Seterusnya ➡️</button>
+    </div>
+
+    <!-- 4. LANGKAH 2 (Susun Urutan Kitar Semula - Pasu Bunga Tergantung) -->
+    <div id="screen-langkah2" class="screen">
+        <h2>Misi 3: Susun Langkah Projek 🪴</h2>
+        <p>Susun urutan langkah membuat <b>Pasu Bunga Tergantung</b> dengan betul!</p>
+
+        <div class="sequence-container" id="seq-list">
+            <div class="seq-item" data-id="1">
+                <span class="num">1</span>
+                <span>Kumpul & Bersihkan Botol Plastik 🧴</span>
+                <span>⬆️⬇️</span>
+            </div>
+            <div class="seq-item" data-id="3">
+                <span class="num">2</span>
+                <span>Tebuk Lubang & Isikan Tanah 🪴</span>
+                <span>⬆️⬇️</span>
+            </div>
+            <div class="seq-item" data-id="2">
+                <span class="num">3</span>
+                <span>Gunting Botol Secara Berhati-hati ✂️</span>
+                <span>⬆️⬇️</span>
+            </div>
+            <div class="seq-item" data-id="4">
+                <span class="num">4</span>
+                <span>Gantung Pasu Bunga Plastik Dah Siap! 🌺</span>
+                <span>⬆️⬇️</span>
+            </div>
+        </div>
+
+        <button class="btn" onclick="checkSequence()">Semak Urutan ✅</button>
+        <p id="seq-msg" style="font-weight:bold; margin-top:10px;"></p>
+
+        <button id="btn-to-penutup" class="btn btn-blue" style="display:none;" onclick="showScreen('screen-penutup')">Ke Penutup ➡️</button>
+    </div>
+
+    <!-- 5. PENUTUP & REFLEKSI (Tamat Gamifikasi) -->
+    <div id="screen-penutup" class="screen">
+        <div class="badge">🏆</div>
+        <h1>TAHNIAH & SYABAS!</h1>
+        <p id="final-congrats" style="font-weight:bold; font-size:1.3rem;"></p>
+
+        <div style="background:#FFF9C4; border:3px solid #FBC02D; border-radius:15px; padding:15px; width:100%; max-width:500px; text-align:left;">
+            <h3 style="margin-top:0; color:#F57F17; text-align:center;">📋 Refleksi Pembelajaran Hari Ini:</h3>
+            <ul style="font-size:1.1rem; line-height:1.6;">
+                <li>✅ Menyebut lebih 4 contoh barang plastik.</li>
+                <li>✅ Menyusun urutan langkah kitar semula plastik dengan betul.</li>
+                <li>✅ Berjaya mereka projek Pasu Bunga Tergantung! 🪴</li>
+            </ul>
+        </div>
+
+        <button class="btn btn-orange" onclick="restartApp()">Main Semula 🔄</button>
+    </div>
+</div>
+
+<script>
+    let studentName = "";
+    let selectedAvatar = "👦";
+    let stars = 0;
+    let plasticFound = 0;
+    let washClicks = 0;
+
+    function selectAvatar(element, avatar) {
+        document.querySelectorAll('.avatar').forEach(el => el.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedAvatar = avatar;
+    }
+
+    function startGame() {
+        const input = document.getElementById('student-name').value.trim();
+        if (input === "") {
+            alert("Sila masukkan nama anda terlebih dahulu!");
+            return;
+        }
+        studentName = input;
+        document.getElementById('player-display').innerText = `👤 ${selectedAvatar} ${studentName}`;
+        showScreen('screen-induksi');
+    }
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function addStars(count) {
+        stars += count;
+        document.getElementById('star-count').innerText = stars;
+    }
+
+    // Set Induksi Logic
+    function checkPlastik(card, isPlastic) {
+        if (card.classList.contains('correct') || card.classList.contains('wrong')) return;
+
+        if (isPlastic) {
+            card.classList.add('correct');
+            plasticFound++;
+            addStars(1);
+            document.getElementById('induksi-msg').innerText = `Bagus! Barangan plastik dijumpai! (${plasticFound}/4)`;
+            
+            if (plasticFound >= 4) {
+                document.getElementById('induksi-msg').innerText = "Syabas! Anda telah mendaftar 4 barang plastik dengan betul! 🎉";
+                document.getElementById('btn-to-langkah1').style.display = 'inline-block';
+            }
+        } else {
+            card.classList.add('wrong');
+            document.getElementById('induksi-msg').innerText = "Alamak, itu bukan diperbuat daripada plastik! Cuba lagi. ❌";
+            setTimeout(() => card.classList.remove('wrong'), 1000);
+        }
+    }
+
+    // Langkah 1 Logic (Cuci Botol)
+    function washBottle() {
+        washClicks++;
+        const bottleEl = document.getElementById('bottle-element');
+        const textEl = document.getElementById('wash-text');
+
+        if (washClicks === 1) {
+            textEl.innerText = "Hampir bersih! Tekan lagi...";
+            bottleEl.style.filter = "grayscale(40%)";
+        } else if (washClicks === 2) {
+            textEl.innerText = "Satu kali lagi!";
+            bottleEl.style.filter = "grayscale(10%)";
+        } else if (washClicks >= 3) {
+            bottleEl.className = "clean-botol";
+            textEl.innerText = "✨ Botol Dah Bersih & Suci! ✨";
+            addStars(2);
+            document.getElementById('btn-to-langkah2').style.display = 'inline-block';
+        }
+    }
+
+    // Langkah 2 Logic (Order Steps / Simple Move Up)
+    const seqList = document.getElementById('seq-list');
+    let items = Array.from(seqList.children);
+
+    items.forEach(item => {
+        item.addEventListener('click', () => {
+            // Simple tap to swap position upwards
+            if (item.previousElementSibling) {
+                seqList.insertBefore(item, item.previousElementSibling);
+                updateNumbers();
+            }
+        });
+    });
+
+    function updateNumbers() {
+        const currentItems = document.querySelectorAll('.seq-item');
+        currentItems.forEach((el, index) => {
+            el.querySelector('.num').innerText = index + 1;
+        });
+    }
+
+    function checkSequence() {
+        const currentItems = document.querySelectorAll('.seq-item');
+        let currentOrder = [];
+        currentItems.forEach(el => currentOrder.push(el.getAttribute('data-id')));
+
+        // Correct order sequence is 1, 2, 3, 4
+        if (currentOrder.join('') === "1234") {
+            document.getElementById('seq-msg').style.color = "#2E7D32";
+            document.getElementById('seq-msg').innerText = "Tahniah! Urutan langkah kitar semula adalah betul! 🌟";
+            addStars(3);
+            document.getElementById('btn-to-penutup').style.display = 'inline-block';
+        } else {
+            document.getElementById('seq-msg').style.color = "#D32F2F";
+            document.getElementById('seq-msg').innerText = "Urutan belum tepat. Tekan mana-mana langkah untuk ubah susunan!";
+        }
+    }
+
+    // Restart Application
+    function restartApp() {
+        stars = 0;
+        plasticFound = 0;
+        washClicks = 0;
+        document.getElementById('star-count').innerText = "0";
+        document.getElementById('student-name').value = "";
+        document.querySelectorAll('.card').forEach(c => c.className = 'card');
+        document.getElementById('induksi-msg').innerText = "";
+        document.getElementById('btn-to-langkah1').style.display = 'none';
+        document.getElementById('btn-to-langkah2').style.display = 'none';
+        document.getElementById('btn-to-penutup').style.display = 'none';
+        
+        // Reset Bottle
+        const bottleEl = document.getElementById('bottle-element');
+        bottleEl.className = "dirty-botol";
+        document.getElementById('wash-text').innerText = "Tekan 3 kali untuk cuci!";
+
+        showScreen('screen-login');
+    }
+
+    // Dynamic Finish Message
+    document.getElementById('btn-to-penutup').addEventListener('click', () => {
+        document.getElementById('final-congrats').innerText = `Hebat sekali, ${studentName}! Kamu telah mengumpul ${stars} Bintang ⭐ dan berjaya melengkapkan projek Pasu Bunga Tergantung!`;
+    });
+</script>
+
+</body>
+</html>
